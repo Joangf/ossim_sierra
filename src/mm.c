@@ -124,8 +124,6 @@ int alloc_pages_range(struct pcb_t *caller, int req_pgnum, struct framephy_struc
   //TODO
   int pgit, fpn;
   struct framephy_struct *newfp_str = NULL;
-  struct framephy_struct *last = NULL;
-
   *frm_lst = NULL; // start with an empty list
 
   for (pgit = 0; pgit < req_pgnum; pgit++)
@@ -137,7 +135,7 @@ int alloc_pages_range(struct pcb_t *caller, int req_pgnum, struct framephy_struc
       newfp_str = malloc(sizeof(struct framephy_struct));
       newfp_str->fpn = fpn;
       newfp_str->fp_next = NULL;
-
+      newfp_str->owner = caller->mm;
       // Add it to the linked list
       if (*frm_lst == NULL)
       {
@@ -145,10 +143,10 @@ int alloc_pages_range(struct pcb_t *caller, int req_pgnum, struct framephy_struc
       }
       else
       {
-        last->fp_next = newfp_str; // append to last
+        newfp_str->fp_next = *frm_lst; // add to the head
+        *frm_lst = newfp_str;         // update head
       }
 
-      last = newfp_str; // move the tail forward
     }
     else
     {
