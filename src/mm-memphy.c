@@ -163,6 +163,27 @@ int MEMPHY_dump(struct memphy_struct *mp)
   /*TODO dump memphy contnt mp->storage
    *     for tracing the memory content
    */
+   if (mp == NULL || mp->storage == NULL)
+   {
+      printf("Error: Invalid memory or storage pointer\n");
+      return -1; // check if memory valid?
+   }
+   printf("===== PHYSICAL MEMORY DUMP =====\n");
+
+   unsigned long address = 0; // use unsigned long to avoid errors when traversing memory address
+
+   // scan memory from 0 to mp-maxsz - 1
+   for (address = 0; address < mp->maxsz; address++)
+   {
+      // check if value at address not equal 0
+      if (mp->storage[address] != 0)
+      {
+         printf("BYTE %08lx: %d\n", address, mp->storage[address]);
+      }
+   }
+   printf("===== PHYSICAL MEMORY END-DUMP =====\n");
+
+   printf("================================================================\n");
    return 0;
 }
 

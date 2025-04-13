@@ -121,7 +121,7 @@ int vmap_page_range(struct pcb_t *caller,           // process call
 
 int alloc_pages_range(struct pcb_t *caller, int req_pgnum, struct framephy_struct **frm_lst)
 {
-  //TODO
+  // TODO
   int pgit, fpn;
   struct framephy_struct *newfp_str = NULL;
   *frm_lst = NULL; // start with an empty list
@@ -144,9 +144,8 @@ int alloc_pages_range(struct pcb_t *caller, int req_pgnum, struct framephy_struc
       else
       {
         newfp_str->fp_next = *frm_lst; // add to the head
-        *frm_lst = newfp_str;         // update head
+        *frm_lst = newfp_str;          // update head
       }
-
     }
     else
     {
@@ -257,7 +256,7 @@ int init_mm(struct mm_struct *mm, struct pcb_t *caller)
   // vma0->next = ...
   vma0->vm_next = NULL;
   /* Point vma owner backward */
-  vma0->vm_mm = mm; 
+  vma0->vm_mm = mm;
 
   /* TODO: update mmap */
   // mm->mmap = ...
@@ -400,7 +399,12 @@ int print_pgtbl(struct pcb_t *caller, uint32_t start, uint32_t end)
   {
     printf("%08ld: %08x\n", pgit * sizeof(uint32_t), caller->mm->pgd[pgit]);
   }
-
+  for (pgit = pgn_start; pgit < pgn_end; pgit++)
+  {
+    printf("Page Number: %d -> Frame Number: %d\n", pgit,
+           PAGING_PTE_FPN(caller->mm->pgd[pgit]));
+  }
+  printf("================================================================\n");
   return 0;
 }
 
