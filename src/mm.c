@@ -92,7 +92,7 @@ int vmap_page_range(struct pcb_t *caller,           // process call
   int pgit = 0;
   int pgn = PAGING_PGN(addr);
   struct framephy_struct *fpit = frames;
-  ret_rg->rg_start = pgn;
+  ret_rg->rg_start = addr;
   ret_rg->rg_end = addr + pgnum * PAGING_PAGESZ;
   for (pgit = 0; pgit < pgnum; pgit++)
   {
