@@ -13,6 +13,7 @@ static struct queue_t running_list;
 #ifdef MLQ_SCHED
 static struct queue_t mlq_ready_queue[MAX_PRIO];
 static int slot[MAX_PRIO];
+uint32_t currentPrior;
 #endif
 
 int queue_empty(void) {
@@ -47,21 +48,35 @@ void init_scheduler(void) {
  *  State representation   prio = 0 .. MAX_PRIO, curr_slot = 0..(MAX_PRIO - prio)
  */
 struct pcb_t * get_mlq_proc(void) {
+	static int currentPrio = 0;
 	struct pcb_t * proc = NULL;
 	/*TODO: get a process from PRIORITY [ready_queue].
 	 * Remember to use lock to protect the queue.
 	 * */
 	pthread_mutex_lock(&queue_lock);
-	for(int i = 0 ; i < MAX_PRIO ; i++)
-	{
-		if(!empty(&mlq_ready_queue[i]) && slot[i] > 0){
-			proc = dequeue(&mlq_ready_queue[i]);
-			slot[i]--;
-			break;
-		}
-	}
-	pthread_mutex_unlock(&queue_lock);
-	return proc;
+	int slot = MAX_PRIO - currentPrio;
+
+    // Duyệt qua các hàng đợi 
+    for (int attempt = 0; attempt < MAX_PRIO; attempt++) {
+        int prio = (currentPrio + attempt) % MAX_PRIO;
+        
+        if (!empty(&mlq_ready_queue[prio])) {
+            // Điều chỉnh slot giảm đi số mức ưu tiên bị bỏ qua
+            slot -= attempt;
+            if (slot > 0) {
+                proc = dequeue(&mlq_ready_queue[prio]);
+                slot--;
+                break;
+            } else {
+                currentPrio = (prio + 1) % MAX_PRIO;
+                slot = MAX_PRIO - currentPrio;
+                break;
+            }
+        }
+    }
+
+    pthread_mutex_unlock(&queue_lock);
+    return proc;
 }
 
 void put_mlq_proc(struct pcb_t * proc) {
@@ -144,5 +159,6 @@ void add_proc(struct pcb_t * proc) {
 	pthread_mutex_unlock(&queue_lock);	
 }
 #endif
+
 
 
