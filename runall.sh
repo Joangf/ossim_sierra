@@ -10,4 +10,5 @@ mkdir -p myout && ./os os_syscall_list > myout/os_syscall_list.output
 mkdir -p myout && ./os sched > myout/sched.output
 mkdir -p myout && ./os sched_0 > myout/sched_0.output
 mkdir -p myout && ./os sched_1 > myout/sched_1.output
+mkdir -p myout && ./os syskill > myout/syskill.output
 echo "Ran all tests"
