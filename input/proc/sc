@@ -1,6 +1,7 @@
-2 4
-alloc 256 0
+20 6
 alloc 256 0
 write 112 0 0
 write 49 0 1
 write 115 0 2
+write -1 0 3
+syscall 101 0
