@@ -119,7 +119,7 @@ int __alloc(struct pcb_t *caller, int vmaid, int rgid, int size, int *alloc_addr
   /* Retry finding a free region after increasing the limit */
 
   caller->mm->symrgtbl[rgid].rg_start = old_sbrk;
-  caller->mm->symrgtbl[rgid].rg_end = old_sbrk + inc_sz;
+  caller->mm->symrgtbl[rgid].rg_end = old_sbrk + size;
 
   *alloc_addr = old_sbrk;
 
@@ -145,7 +145,7 @@ int __free(struct pcb_t *caller, int vmaid, int rgid)
   // Retrieve the memory region by region ID
   unsigned long start = caller->mm->symrgtbl[rgid].rg_start;
   unsigned long end = caller->mm->symrgtbl[rgid].rg_end;
-
+  // printf("Freeing region %d: start=%08lx end=%08lx\n", rgid, start, end);
   // Check if the region is valid
   if (start == 0 && end == 0)
   {
@@ -427,7 +427,7 @@ int libread(
 
 #ifdef IODUMP
   printf("===== PHYSICAL MEMORY AFTER READING =====\n");
-  printf("read region=%d offset=%d value=%d\n", source, offset, data);
+  printf("PID=%d read region=%d offset=%d value=%d\n", proc->pid, source, offset, data);
 #ifdef PAGETBL_DUMP
   print_pgtbl(proc, 0, -1); // Print max TBL
 #endif
@@ -472,7 +472,7 @@ int libwrite(
 
 #ifdef IODUMP
   printf("===== PHYSICAL MEMORY AFTER WRITING =====\n");
-  printf("write region=%d offset=%d value=%d\n", destination, offset, data);
+  printf("PID=%d write region=%d offset=%d value=%d\n",proc->pid, destination, offset, data);
 #ifdef PAGETBL_DUMP
   print_pgtbl(proc, 0, -1); // print max TBL
 #endif
