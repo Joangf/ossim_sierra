@@ -64,7 +64,6 @@ struct pcb_t * get_mlq_proc(void) {
             Slot -= attempt;
             if (Slot > 0) {
                 proc = dequeue(&mlq_ready_queue[prio]);
-                Slot--;
                 break;
             } else {
                 currentPrio = (prio + 1) % MAX_PRIO;
