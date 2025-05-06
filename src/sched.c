@@ -67,7 +67,6 @@ struct pcb_t * get_mlq_proc(void) {
                 break;
             } else {
                 currentPrio = (prio + 1) % MAX_PRIO;
-                Slot = MAX_PRIO - currentPrio;
                 break;
             }
         }
