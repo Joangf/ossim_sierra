@@ -53,20 +53,19 @@ struct pcb_t * get_mlq_proc(void) {
 	 * Remember to use lock to protect the queue.
 	 * */
 	pthread_mutex_lock(&queue_lock);
-	int Slot = MAX_PRIO - currentPrio;
 
     // Duyệt qua các hàng đợi 
-    for (int attempt = 0; attempt < MAX_PRIO; attempt++) {
-        int prio = (currentPrio + attempt) % MAX_PRIO;
+    for (int i = 0; i < MAX_PRIO; i++) {
+        int prio = (currentPrio + i) % MAX_PRIO;
         
         if (!empty(&mlq_ready_queue[prio])) {
-            // Điều chỉnh slot giảm đi số mức ưu tiên bị bỏ qua
-            Slot -= attempt;
-            if (Slot > 0) {
+            if (slot[prio] > 0) {
                 proc = dequeue(&mlq_ready_queue[prio]);
+                slot[prio]--;
                 break;
             } else {
                 currentPrio = (prio + 1) % MAX_PRIO;
+                slot[prio] = MAX_PRIO - prio;
                 break;
             }
         }
@@ -156,6 +155,3 @@ void add_proc(struct pcb_t * proc) {
 	pthread_mutex_unlock(&queue_lock);	
 }
 #endif
-
-
-
