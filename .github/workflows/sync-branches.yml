@@ -1,0 +1,33 @@
+name: Sync to Test Branch
+
+on:
+  push:
+    branches:
+      - master
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+
+    steps:
+
+      - name: Checkout test branch
+        uses: actions/checkout@v4
+        with:
+          ref: 'test'
+          fetch-depth: 0
+
+
+      - name: Set up Git user
+        run: |
+          git config --global user.name 'github-actions[bot]'
+          git config --global user.email 'github-actions[bot]@users.noreply.github.com'
+
+      - name: Merge backend branch
+        run: |
+          git fetch origin master:master
+          git merge --no-ff -m "CI: Merge branch 'backend' into test" master
+
+      - name: Push changes
+        run: |
+          git push origin test
